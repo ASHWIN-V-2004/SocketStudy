@@ -67,28 +67,55 @@ def server():
     conn, addr = s.accept()
     print("Connected by:", addr)
 
-    data = conn.recv(1024)
-    print("Client says:", data.decode())
+    while True:
+        data = conn.recv(1024)
+        msg = data.decode()
+        print("Client says:", msg)
 
-    # Take input from server user
-    msg = input("Enter message from server: ")
-    conn.send(msg.encode())
+        if msg.lower() == "exit":
+            break
+
+        # Smart reply logic
+        msg_lower = msg.lower()
+
+        if "hello" in msg_lower or "hi" in msg_lower:
+            reply = "Hello! Nice to meet you."
+        
+        elif "my name is" in msg_lower or "i am" in msg_lower:
+            reply = "Nice to meet you! I am your server."
+        
+        elif "how are you" in msg_lower or "what about you" in msg_lower:
+            reply = "I am doing well. Thanks for asking!"
+        
+        elif "fine" in msg_lower:
+            reply = "Glad to hear that! How can I help you?"
+        
+        elif "bye" in msg_lower or "goodbye" in msg_lower:
+            reply = "Goodbye! Have a great day."
+        
+        else:
+            reply = "Can you please clarify?"
+
+        conn.send(reply.encode())
 
     conn.close()
     s.close()
 
 def client():
-    time.sleep(1)  # wait for server to start
+    time.sleep(1)
 
     c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     c.connect(("127.0.0.1", 5000))
 
-    # Take input from client user
-    msg = input("Enter message from client: ")
-    c.send(msg.encode())
+    while True:
+        msg = input("Enter message from client: ")
+        c.send(msg.encode())
 
-    response = c.recv(1024)
-    print("Server says:", response.decode())
+        if msg.lower() == "exit":
+            break
+
+        response = c.recv(1024)
+        print("Server says:", response.decode())
 
     c.close()
 
@@ -102,7 +129,8 @@ server_thread.join()
 client_thread.join()
 ```
 ## Output:
-<img width="571" height="137" alt="image" src="https://github.com/user-attachments/assets/7c1ade57-59e0-4bf1-b971-03ea4ed2a872" />
+<img width="452" height="236" alt="image" src="https://github.com/user-attachments/assets/dd1cc05d-2cd1-4bd7-ac8e-3837ddabd23e" />
+
 
 
 ## Result:
